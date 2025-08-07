@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+from email.policy import default
 from pathlib import Path
 
 from decouple import config
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     # Installed app
     'rest_framework',
     'rest_framework_simplejwt',
+    'mail_templated',
 
     # local app
     'accounts.apps.AccountsConfig',
@@ -134,3 +136,12 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
+
+
+
+EMAIL_BACKEND = config("EMAIL_BACKEND")
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=False, cast=bool)
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+EMAIL_PORT = config("EMAIL_PORT")
