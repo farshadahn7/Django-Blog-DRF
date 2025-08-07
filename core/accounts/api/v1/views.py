@@ -1,5 +1,5 @@
 from rest_framework.response import Response
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, UpdateAPIView
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework_simplejwt.views import (
@@ -11,8 +11,14 @@ import jwt
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from decouple import config
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 
-from .serializers import RegistrationSerializers, CustomTokenObtainPairSerializer, CustomTokenRefreshSerializer
+from .serializers import (
+    RegistrationSerializers,
+    CustomTokenObtainPairSerializer,
+    CustomTokenRefreshSerializer,
+    ChangePasswordSerializers
+)
 from ...models import CustomUser
 from .manually_token import get_tokens_for_user
 
@@ -57,3 +63,15 @@ class VerifyAccountView(APIView):
             return Response({"details": e}, status=status.HTTP_400_BAD_REQUEST)
         except InvalidTokenError as e:
             return Response({"details": e}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChangePasswordView(UpdateAPIView):
+    serializer_class = ChangePasswordSerializers
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    def put(self, request, *args, **kwargs):
+        super().put(request, *args, **kwargs)
+        return Response({"details": "Password changed successfully."})

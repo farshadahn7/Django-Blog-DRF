@@ -33,3 +33,23 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class CustomTokenRefreshSerializer(TokenRefreshSerializer):
     pass
+
+
+class ChangePasswordSerializers(serializers.ModelSerializer):
+    re_password = serializers.CharField(max_length=128, write_only=True)
+    class Meta:
+        model = CustomUser
+        fields = ['password', 're_password']
+
+    def validate(self, attrs):
+        pass_validator(attrs.get('password'), attrs.get('re_password'))
+        return super().validate(attrs)
+
+    def update(self, instance, validated_data):
+        validated_data.pop("re_password")
+        if instance.check_password(validated_data.get("password")):
+            raise serializers.ValidationError("Password cannot be equal to the previous one.")
+        else:
+            instance.set_password(validated_data.get("password"))
+            instance.save()
+            return instance

@@ -8,4 +8,5 @@ urlpatterns = [
     path('token/', views.TokenJwtView.as_view(), name='login'),
     path('refresh-token/', views.TokenRefreshJwtView.as_view(), name='refresh-token'),
     path('user-verification/<str:token>/', views.VerifyAccountView.as_view(), name='verify-user'),
+    path('change-password/', views.ChangePasswordView.as_view(), name="change-password"),
 ]
