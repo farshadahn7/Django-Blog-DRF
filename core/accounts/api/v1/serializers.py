@@ -1,4 +1,7 @@
+from typing import Any
+
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 
 from ...models import CustomUser
 from .pass_validator import pass_validator
@@ -19,3 +22,14 @@ class RegistrationSerializers(serializers.ModelSerializer):
         user = CustomUser.objects.create_user(**validated_data)
         user.save()
         return user
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data['email'] = self.user.email
+        data['username'] = self.user.username
+        data['id'] = self.user.id
+        return data
+
+class CustomTokenRefreshSerializer(TokenRefreshSerializer):
+    pass
