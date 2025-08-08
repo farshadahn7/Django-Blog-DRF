@@ -3,7 +3,7 @@ from typing import Any
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 
-from ...models import CustomUser
+from ...models import CustomUser, Profile
 from .pass_validator import pass_validator
 
 
@@ -83,3 +83,11 @@ class ResetPasswordSerializers(serializers.ModelSerializer):
     def validate(self, attrs):
         pass_validator(attrs.get('password'), attrs.get('re_password'))
         return super().validate(attrs)
+
+class ProfileSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ['first_name', 'last_name', 'bio', 'avatar']
+
+
+

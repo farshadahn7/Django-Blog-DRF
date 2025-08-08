@@ -1,6 +1,6 @@
 from django.core.serializers import serialize
 from rest_framework.response import Response
-from rest_framework.generics import CreateAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, UpdateAPIView, RetrieveUpdateAPIView
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework_simplejwt.views import (
@@ -20,9 +20,10 @@ from .serializers import (
     CustomTokenRefreshSerializer,
     ChangePasswordSerializers,
     ForgetPasswordEmailSerializers,
-    ResetPasswordSerializers
+    ResetPasswordSerializers,
+    ProfileSerializers
 )
-from ...models import CustomUser
+from ...models import CustomUser, Profile
 from .manually_token import get_tokens_for_user
 
 
@@ -116,3 +117,14 @@ class ForgetPasswordView(APIView):
             return Response({"details": e}, status=status.HTTP_400_BAD_REQUEST)
         except InvalidTokenError as e:
             return Response({"details": e}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProfileView(RetrieveUpdateAPIView):
+    serializer_class = ProfileSerializers
+    permission_classes = [IsAuthenticated]
+    lookup_field = "username"
+    queryset = Profile.objects.all()
+
+    def get_object(self):
+        obj = self.queryset.filter(user__username=self.kwargs["username"]).first()
+        return obj
