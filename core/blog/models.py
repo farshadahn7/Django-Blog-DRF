@@ -34,7 +34,7 @@ class Post(models.Model):
 
     title = models.CharField(max_length=256)
     content = models.TextField()
-    slug = models.SlugField(blank=True)
+    slug = models.SlugField(blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
     status = models.CharField(max_length=3, default=Status.Draft, choices=Status.choices)
     post_image = models.ImageField(upload_to="post_images", null=True, blank=True)

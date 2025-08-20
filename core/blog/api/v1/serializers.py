@@ -1,9 +1,13 @@
 from unicodedata import category
-
-from django.template.context_processors import request
+from django.db import IntegrityError
+from django.utils.text import slugify
 from rest_framework import serializers
 from django.shortcuts import reverse
+from django.contrib.auth import get_user_model
 from ...models import Post, Category
+from rest_framework.validators import UniqueTogetherValidator
+
+User = get_user_model()
 
 
 class CategorySerializers(serializers.ModelSerializer):
@@ -24,6 +28,7 @@ class PostSerializers(serializers.ModelSerializer):
         lookup_field='slug',
         source="category"
     )
+
     class Meta:
         model = Post
         fields = [
@@ -39,6 +44,27 @@ class PostSerializers(serializers.ModelSerializer):
             "post_details_link",
         ]
         read_only_fields = ['snippet', "cat"]
+
+    def validate(self, data):
+        title = data.get("title")
+        if title:
+            data["slug"] = slugify(title)
+
+        return data
+
+    def create(self, validated_data):
+        request = self.context.get("request")
+        cats = validated_data.pop('category', [])
+        user = User.objects.get(username=request.user)
+        validated_data["author"] = user
+        try:
+            post = Post.objects.create(**validated_data)
+        except IntegrityError:
+            raise serializers.ValidationError({
+                "detail": "A post with this title for the same date already exists."
+            })
+        post.category.set(cats)
+        return post
 
     def get_post_details_link(self, instance):
         request = self.context.get("request")
@@ -60,6 +86,3 @@ class PostSerializers(serializers.ModelSerializer):
             data.pop("content", None)
             data.pop("status", None)
         return data
-
-
-

@@ -19,3 +19,6 @@ env.bak/
 venv.bak/
 
 ruff.toml
+
+# images
+core/post_images
