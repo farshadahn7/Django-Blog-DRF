@@ -1,6 +1,6 @@
 from django.db import models
 
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager, AbstractUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
 
 class CustomUserManager(BaseUserManager):
@@ -52,7 +52,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 class Profile(models.Model):
     first_name = models.CharField(max_length=128, blank=True, null=True)
-    last_name = models.CharField(max_length=128,blank=True, null=True)
+    last_name = models.CharField(max_length=128, blank=True, null=True)
     bio = models.TextField()
     avatar = models.ImageField(upload_to='profile_images')
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)

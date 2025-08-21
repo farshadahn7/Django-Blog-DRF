@@ -1,4 +1,3 @@
-from django.core.serializers import serialize
 from rest_framework.response import Response
 from rest_framework.generics import CreateAPIView, UpdateAPIView, RetrieveUpdateAPIView
 from rest_framework.views import APIView

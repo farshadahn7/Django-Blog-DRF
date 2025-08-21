@@ -1,8 +1,6 @@
-from rest_framework.response import Response
-from django.utils.text import slugify
 from rest_framework.generics import ListCreateAPIView, RetrieveAPIView, RetrieveUpdateAPIView
 from django.shortcuts import get_object_or_404
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from .serializers import PostSerializers, CategorySerializers
 from ...models import Post, Category

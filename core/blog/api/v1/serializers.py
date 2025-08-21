@@ -1,11 +1,10 @@
-from unicodedata import category
 from django.db import IntegrityError
 from django.utils.text import slugify
 from rest_framework import serializers
 from django.shortcuts import reverse
 from django.contrib.auth import get_user_model
 from ...models import Post, Category
-from rest_framework.validators import UniqueTogetherValidator
+
 
 User = get_user_model()
 

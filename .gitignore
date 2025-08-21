@@ -22,3 +22,6 @@ ruff.toml
 
 # images
 core/post_images
+
+# Ruff settings
+my_ruff.toml
