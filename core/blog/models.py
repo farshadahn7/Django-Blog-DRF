@@ -2,6 +2,7 @@ from django.db import models
 from django.shortcuts import reverse
 from django.contrib.auth import get_user_model
 from django.template.defaultfilters import slugify
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -42,7 +43,7 @@ class Post(models.Model):
     category = models.ManyToManyField(Category, related_name="posts")
 
     created_date = models.DateTimeField(auto_now_add=True)
-    published_date = models.DateField()
+    published_date = models.DateField(default=timezone.now())
     updated_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
