@@ -14,7 +14,7 @@ class Category(models.Model):
 
     cat_name = models.CharField(max_length=128, unique=True)
     status = models.CharField(max_length=3, default=Status.Draft, choices=Status.choices)
-    slug = models.SlugField(max_length=100, unique=True, db_index=True, blank=True)
+    slug = models.SlugField(unique=True, db_index=True, blank=True)
 
 
     def __str__(self):
