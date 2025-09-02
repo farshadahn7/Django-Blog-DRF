@@ -5,15 +5,25 @@ from django.shortcuts import reverse
 from django.contrib.auth import get_user_model
 from ...models import Post, Category
 
-
 User = get_user_model()
 
 
 class CategorySerializers(serializers.ModelSerializer):
+    cat_details_link = serializers.HyperlinkedIdentityField(
+        read_only=True,
+        view_name="blog:api-v1:category-detail",
+        lookup_field="slug"
+    )
+
     class Meta:
         model = Category
-        fields = ["cat_name", "slug"]
-        read_only_fields = ("slug",)
+        fields = ["cat_name", "cat_details_link"]
+
+    def validate(self, attrs):
+        cat_name = attrs.get("cat_name")
+        if cat_name:
+            attrs["slug"] = slugify(cat_name)
+        return attrs
 
 
 class PostSerializers(serializers.ModelSerializer):
@@ -78,10 +88,27 @@ class PostSerializers(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         request = self.context.get("request")
-        if request.parser_context.get("kwargs").get("slug"):
+
+        if ('slug' and 'year' and 'day' and 'month') in request.parser_context.get("kwargs"):
             data.pop("snippet", None)
             data.pop("post_details_link", None)
         else:
             data.pop("content", None)
             data.pop("status", None)
         return data
+
+
+class CategoryPostsSerializers(serializers.ModelSerializer):
+    related_posts = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Category
+        fields = ["related_posts"]
+
+    def get_related_posts(self, instance):
+        posts = instance.posts.all()
+        request = self.context.get("request")
+        context = {
+            "request":request
+        }
+        return PostSerializers(posts, many=True, context=context).data

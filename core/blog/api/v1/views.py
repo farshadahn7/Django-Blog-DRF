@@ -2,7 +2,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveAPIView, Retrieve
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-from .serializers import PostSerializers, CategorySerializers
+from .serializers import PostSerializers, CategorySerializers, CategoryPostsSerializers
 from ...models import Post, Category
 from .permissions import IsOwnerOrReadOnly
 
@@ -30,6 +30,20 @@ class PostDetailView(RetrieveUpdateAPIView):
 
 class CategoryDetails(RetrieveAPIView):
     serializer_class = CategorySerializers
+    queryset = Category.objects.all()
+
+    def get_object(self):
+        slug = self.kwargs["slug"]
+        obj = get_object_or_404(self.queryset, slug=slug)
+        return obj
+
+class CategoriesView(ListCreateAPIView):
+    serializer_class = CategorySerializers
+    queryset = Category.objects.all()
+
+
+class CategoryPostsView(RetrieveAPIView):
+    serializer_class = CategoryPostsSerializers
     queryset = Category.objects.all()
 
     def get_object(self):
