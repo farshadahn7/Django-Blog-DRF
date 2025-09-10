@@ -76,6 +76,21 @@ services:
     networks:
       - BlogNetwork
 
+  flower:
+    working_dir: '/app/core/'
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    container_name: flower
+    volumes:
+      - .:/app
+    depends_on:
+      - worker
+    command: celery --broker=${CELERY_BROKER_URL} flower
+    ports:
+      - "5555:5555"
+    networks:
+      - BlogNetwork
 
 volumes:
   db:
