@@ -20,7 +20,7 @@
 - **Task Queue:** Celery + Redis  
 - **Email Testing:** smtp4dev  
 - **Containerization:** Docker & docker-compose
-- **API Docs:** Swagger (drf-yasg or drf-spectacular)  
+- **API Docs:** Swagger (drf-yasg)  
 
 ---
 
