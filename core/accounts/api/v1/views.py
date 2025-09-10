@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from mail_templated import send_mail
+
 import jwt
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from decouple import config
@@ -24,6 +24,7 @@ from .serializers import (
 )
 from ...models import CustomUser, Profile
 from .manually_token import get_tokens_for_user
+from .tasks import send_email
 
 
 class RegistrationView(CreateAPIView):
@@ -40,8 +41,10 @@ class RegistrationView(CreateAPIView):
             'username': user.username,
 
         }
-        send_mail(template_name="email/email_verification.tpl", from_email="farshad@test.com", context=msg,
-                  recipient_list=[user.email])
+        send_email.apply_async(
+            kwargs={"template_name": "email/email_verification.tpl", "from_email": "farshad@test.com", "context": msg,
+                    "recipient_list": [user.email]})
+
         return Response("Registration is done successfully. Please check your mail.", status=status.HTTP_201_CREATED)
 
 
@@ -92,8 +95,12 @@ class ResetPasswordView(APIView):
             "access_token": access_token,
             "username": user.username
         }
-        send_mail(template_name="email/email_password_reset.tpl", context=msg, from_email="farshad@test.com",
-                  recipient_list=[user.email])
+
+        send_email.apply_async(
+            kwargs={"template_name": "email/email_password_reset.tpl", "from_email": "farshad@test.com", "context": msg,
+                    "recipient_list": [user.email]})
+
+
         return Response("Password Reset email sent to your mail.")
 
 
