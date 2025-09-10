@@ -29,6 +29,7 @@ services:
       - '8001:8000'
     depends_on:
       - db
+      - redis
     networks:
       - BlogNetwork
 
@@ -50,6 +51,30 @@ services:
       - BlogNetwork
 
 
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
+    networks:
+      - BlogNetwork
+
+  worker:
+    working_dir: '/app/core/'
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    container_name: celery
+    volumes:
+      - .:/app
+    depends_on:
+      - web
+      - redis
+    command: celery -A core worker --loglevel=info
+    networks:
+      - BlogNetwork
 
 
 volumes:
