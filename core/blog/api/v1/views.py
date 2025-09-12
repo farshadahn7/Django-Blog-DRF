@@ -7,6 +7,7 @@ from .serializers import PostSerializers, CategorySerializers, CategoryPostsSeri
 from ...models import Post, Category
 from .permissions import IsOwnerOrReadOnly
 from .tasks import send_email
+from .pagination import CustomPagination
 
 CustomUser = get_user_model()
 
@@ -15,6 +16,7 @@ class PostsView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializers
     queryset = Post.objects.prefetch_related("category").filter(status="pb")
+    pagination_class = CustomPagination
 
     def post(self, request, *args, **kwargs):
         created_post = super().post(request, *args, **kwargs)
@@ -33,6 +35,7 @@ class PostDetailView(RetrieveUpdateAPIView):
     serializer_class = PostSerializers
     queryset = Post.objects.prefetch_related("category").all()
     permission_classes = [IsOwnerOrReadOnly]
+
 
     def get_object(self):
         slug = self.kwargs["slug"]
@@ -57,6 +60,7 @@ class CategoryDetails(RetrieveAPIView):
 class CategoriesView(ListCreateAPIView):
     serializer_class = CategorySerializers
     queryset = Category.objects.all()
+    pagination_class = CustomPagination
 
 
 class CategoryPostsView(RetrieveAPIView):
