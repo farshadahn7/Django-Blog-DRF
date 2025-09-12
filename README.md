@@ -3,13 +3,14 @@
 
 ## 🚀 Features
 
-- User registration & authentication (simple-JWT)
+- User registration, login, JWT authentication (using SimpleJWT)
 - CRUD for blog posts
 - Categories for posts
 - Asynchronous email sending with Celery & Redis
 - Containerized development environment with Docker
 - Local email capture with smtp4dev
 - Interactive API documentation with Swagger
+- pagination, filtering, and permissions
 
 ---
 
@@ -45,4 +46,11 @@ cp .env.example .env
 ```bash
 docker-compose up --build -d
 ```
-
+4. Generate dummy data
+```bash
+docker container exec -it <container_id or name> /bin/bash
+cd core/
+python manage.py user_data
+python manage.py category_data
+python manage.py blog_data
+```
