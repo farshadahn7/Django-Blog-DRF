@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'mail_templated',
     'drf_yasg',
+    'django_filters',
 
     # local app
     'accounts.apps.AccountsConfig',

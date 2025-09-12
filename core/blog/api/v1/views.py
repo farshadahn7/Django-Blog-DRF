@@ -2,6 +2,8 @@ from rest_framework.generics import ListCreateAPIView, RetrieveAPIView, Retrieve
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.contrib.auth import get_user_model
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter
 
 from .serializers import PostSerializers, CategorySerializers, CategoryPostsSerializers
 from ...models import Post, Category
@@ -17,6 +19,9 @@ class PostsView(ListCreateAPIView):
     serializer_class = PostSerializers
     queryset = Post.objects.prefetch_related("category").filter(status="pb")
     pagination_class = CustomPagination
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_fields = ['author','title', 'category']
+    search_fields = ['^author__username', 'title']
 
     def post(self, request, *args, **kwargs):
         created_post = super().post(request, *args, **kwargs)
@@ -61,6 +66,8 @@ class CategoriesView(ListCreateAPIView):
     serializer_class = CategorySerializers
     queryset = Category.objects.all()
     pagination_class = CustomPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['cat_name']
 
 
 class CategoryPostsView(RetrieveAPIView):
